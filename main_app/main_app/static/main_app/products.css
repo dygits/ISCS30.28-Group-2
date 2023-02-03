@@ -1,0 +1,40 @@
+table {
+    border-collapse: separate;
+}
+
+.table {
+    border: 1px solid #DFE0EB;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.table th {
+    text-align: center;
+}
+
+.table tr {
+    text-align: center;
+    
+    height: 50px;
+    border: 1px solid black;
+}
+
+/* .table tbody tr:hover {
+    background: #C5C7CD;
+} */
+
+.table tbody tr:hover {
+    /* background: #C5C7CD; */
+    color: gray;
+    cursor: pointer;
+}
+
+.ingredients-list {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.ingredients-list a:hover {
+    color: white;
+}

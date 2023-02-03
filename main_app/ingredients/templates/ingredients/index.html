@@ -1,0 +1,79 @@
+{% extends 'main_app/base.html' %}
+
+{% block content %}
+<div class="products-hero">
+    <div class="container">
+        <h1 class="jumbotron-heading">Ingredients</h1>
+        <p>A table of all ingredients</p>
+        <a href="{% url 'add_ingredient' %}"><button class="btn btn-dark-grabgrub">Add Ingredient</button></a>
+        <a href="{% url 'send_notification' %}"><button type="submit" class="btn btn-dark-grabgrub float-right mr-4" >Send Notifications</button></a>
+        <a href="{% url 'view_batch_updates' %}"><button type="submit" class="btn btn-dark-grabgrub float-right mr-4" >Batch Updates</button></a>
+    </div>
+</div>
+
+<div class="col-12">
+    <table class="table table-striped" id="food_table">
+        <thead>
+            <th scope="col"> Ingredient Name </th>
+            <th scope="col"> Current Quantity </th>
+            <th scope="col"> Quantity Priority </th>
+            <th scope="col"> Expiration Date </th>
+            <th scope="col"> Expiration Priority </th>
+            <th scope="col"> Supplier </th>
+            <th scope="col" class="no-sort"></th>
+            <th scope="col" class="no-sort"></th>
+        </thead>
+        <tbody>
+            {% for ingredient in ingredients %}
+            <tr>
+                <td> {{ ingredient.name }} </td>
+                <td> {{ ingredient.current_quantity }} ({{ ingredient.metric }})</td>
+                {% if ingredient.get_quantity_ratio >= 2 %}
+                    <td class="quantity-priority-low"> Low ({{ ingredient.quantity_threshold }}) | {{ ingredient.get_quantity_ratio }} </td>
+                {% elif ingredient.get_quantity_ratio < 2 %}
+                    {% if ingredient.get_quantity_ratio >= 1.5 %}
+                        <td class="quantity-priority-medium"> Medium ({{ ingredient.quantity_threshold }}) | {{ ingredient.get_quantity_ratio }} </td>
+                    {% elif ingredient.get_quantity_ratio < 1.5 %}
+                        <td class="quantity-priority-high"> High ({{ ingredient.quantity_threshold }}) | {{ ingredient.get_quantity_ratio }} </td>
+                    {% endif %}
+                {% endif %}
+                <td> {{ ingredient.expiration_date }}</td>
+                {% if ingredient.get_expiration_priority.days >= 7 %}
+                    <td class="quantity-priority-low"> Low ({{ ingredient.get_expiration_priority }})</td>
+                {% elif ingredient.get_expiration_priority.days < 7 %}
+                    {% if ingredient.get_expiration_priority.days >= 4 %}
+                        <td class="quantity-priority-medium"> Medium ({{ ingredient.get_expiration_priority }})</td>
+                    {% elif ingredient.get_expiration_priority.days <= 3 %}
+                        <td class="quantity-priority-high"> High ({{ ingredient.get_expiration_priority }})</td>
+                    {% endif %}
+                {% endif %}
+                <td> {{ ingredient.supplier.name }}</td>
+                <td>
+                    <a href="{%  url 'view_ingredient' ingredient.pk %}">
+                        <button class="btn btn-dark-grabgrub">View</button>
+                    </a>
+                </td>
+                <td>
+                    <a href="{%  url 'batch_ingredient' ingredient.pk %}">
+                        <button class="btn btn-dark-grabgrub">Add</button>
+                    </a>
+                </td>
+                <td>
+                    <a href="{%  url 'update_ingredient' ingredient.pk %}">
+                        <button class="btn btn-dark-grabgrub">Update</button>
+                    </a>
+                </td>
+                <td>
+                    <form action="{%  url 'delete_ingredient' ingredient.pk %}" method="post" onsubmit="window.mytest()">
+                        {% csrf_token %}
+                        <a href="{%  url 'delete_ingredient' ingredient.pk %}">
+                            <button class="btn btn-dark-grabgrub">Delete</button>
+                        </a>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
